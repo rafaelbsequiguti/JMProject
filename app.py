@@ -1,18 +1,29 @@
 import os
-from openai import OpenAI
+import openai  # A importação permanece a mesma
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
 
-# Inicializa o cliente OpenAI
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+# Inicializa a chave da API
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
 
 # Texto fixo que será sempre incluído
-texto_fixo = "Analise o dataset a seguir e me responda as seguintes informações: \n 1. Quem é o cliente?  \n 2. O orçamento é referente a qual obra/lugar? \n 3. A arquitetura/projeto arquitetonico foi realizado por quem? \n 4. Quais as formas de pagamento? \n 5. Detalhe resumidamente as atividades orçadas com seus respectivos valores em Reais brasileiros, separados por linhas. \n 6. Qual o valor total dos serviços descritos? \n Observações: 1. Caso a informação não for encontrada, retorne 'Informação não foi encontrada'. \n Retorne as respostas separadas por linhas. \n Dataset: \n"
+texto_fixo = """Analise o dataset a seguir e me responda as seguintes informações: 
+1. Quem é o cliente?  
+2. O orçamento é referente a qual obra/lugar? 
+3. A arquitetura/projeto arquitetonico foi realizado por quem? 
+4. Quais as formas de pagamento? 
+5. Detalhe resumidamente as atividades orçadas com seus respectivos valores em Reais brasileiros, separados por linhas. 
+6. Qual o valor total dos serviços descritos? Retorne somente o valor.
+Observações: 
+1. Caso a informação não for encontrada, retorne 'Informação não foi encontrada'. 
+Retorne as respostas separadas por linhas. 
+Dataset: 
+"""
 
 @app.route('/')
 def home():
@@ -31,19 +42,16 @@ def processar():
     print(texto_completo)
     
     try:
-        # Envia a requisição para a OpenAI usando o novo cliente
-        chat_completion = client.chat.completions.create(
+        # Requisição usando o método correto da API
+        response = openai.ChatCompletion.create(
+            model="gpt-4",  # Modelo desejado
             messages=[
                 {"role": "user", "content": texto_completo}
-            ],
-            model="gpt-4"  # Modelo desejado (por exemplo, gpt-4)
+            ]
         )
 
-        # Convertendo o objeto para dicionário e acessando os dados
-        chat_completion_dict = chat_completion.to_dict()
-
         # Acessando a resposta corretamente
-        texto_processado = chat_completion_dict['choices'][0]['message']['content'].strip()
+        texto_processado = response['choices'][0]['message']['content'].strip()
         print(texto_processado)
 
         # Retorna o texto processado como resposta
@@ -55,4 +63,3 @@ def processar():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)
-

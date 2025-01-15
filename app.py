@@ -13,14 +13,15 @@ app = Flask(__name__)
 
 # Texto fixo que será sempre incluído
 texto_fixo = """Analise o dataset a seguir e me responda as seguintes informações: 
-1. Quem é o cliente?  
-2. O orçamento é referente a qual obra/lugar? 
-3. A arquitetura/projeto arquitetonico foi realizado por quem? 
+1. Quem é o cliente? Formato de retorno: Cliente: nome da pessoa
+2. O orçamento é referente a qual obra/lugar? Formato de retorno: Obra: nome da obra, Lugar: localização
+3. A arquitetura/projeto arquitetonico foi realizado por quem? Formato de retorno: Arquiteto: nome do arquiteto, Empresa: nome da empresa de arquitetura
 4. Quais as formas de pagamento? 
-5. Detalhe resumidamente as atividades orçadas com seus respectivos valores em Reais brasileiros, separados por linhas. 
-6. Qual o valor total dos serviços descritos? Retorne somente o valor.
+5. Detalhe resumidamente as atividades orçadas com seus respectivos valores em Reais (Brasil), separados por linhas. 
+6. Qual o valor total dos serviços descritos?. Formato de retorno: Valor total do orçamento: valor total
 Observações: 
 1. Caso a informação não for encontrada, retorne 'Informação não foi encontrada'. 
+2. Retorne os valores monetarios no padrao R$000.000.000,00
 Retorne as respostas separadas por linhas. 
 Dataset: 
 """

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correção de Texto</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  <!-- Adicionando o jQuery -->
+</head>
+<body>
+    <h1>Correção de Orçamento</h1>
+
+    <form id="form-processar">
+        <textarea name="texto" id="texto" rows="10" cols="50" placeholder="Digite o orçamento aqui..."></textarea><br><br>
+        <button type="submit">Processar</button>
+    </form>
+
+    <h2>Texto Corrigido:</h2>
+    <div id="resultado"></div>  <!-- Div onde a resposta será exibida -->
+
+    <script>
+        $(document).ready(function(){
+            // Quando o formulário for submetido
+            $("#form-processar").submit(function(event){
+                event.preventDefault();  // Impede o envio normal do formulário
+
+                var texto = $("#texto").val();  // Obtém o texto do campo de textarea
+
+                // Envia o texto para o backend via AJAX
+                $.ajax({
+                    url: "/processar",  // URL do Flask
+                    method: "POST",
+                    data: {texto: texto},  // Dados que estamos enviando
+                    success: function(response) {
+                        // Exibe o texto corrigido na div "resultado"
+                        if(response.texto_corrigido) {
+                            $("#resultado").text(response.texto_corrigido);
+                        } else {
+                            $("#resultado").text("Erro ao processar o texto.");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $("#resultado").text("Erro na requisição: " + error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

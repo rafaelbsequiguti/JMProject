@@ -51,10 +51,32 @@
             padding: 10px 20px;
             cursor: pointer;
             border-radius: 5px;
+            display: inline-block;
+            position: relative;
         }
 
         button:hover {
             background-color: #45a049;
+        }
+
+        /* Spinner (carregando) */
+        #loading {
+            display: none;
+            border: 5px solid #f3f3f3; /* Cor de fundo do spinner */
+            border-top: 5px solid #333; /* Cor da parte superior do spinner */
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 0; /* Alinha o spinner ao topo do botão */
+            left: 110%; /* Coloca o spinner ao lado do botão */
+            margin-left: 10px; /* Espaçamento entre o botão e o spinner */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         #resultado {
@@ -80,7 +102,10 @@
 
     <form id="form-processar">
         <textarea name="texto" id="texto" rows="15" cols="100" placeholder="Digite o orçamento aqui..."></textarea><br><br>
-        <button type="submit">Processar</button>
+        <div style="position: relative; display: inline-block;">
+            <button type="submit">Processar</button>
+            <div id="loading"></div>  <!-- Spinner ao lado do botão -->
+        </div>
     </form>
 
     <h2>Texto Corrigido:</h2>
@@ -94,12 +119,19 @@
 
                 var texto = $("#texto").val();  // Obtém o texto do campo de textarea
 
+                // Exibe o indicador de carregamento (spinner)
+                $("#loading").show();
+                $("#resultado").html(""); // Limpa a área de resultado
+
                 // Envia o texto para o backend via AJAX
                 $.ajax({
                     url: "/processar",  // URL do Flask
                     method: "POST",
                     data: {texto: texto},  // Dados que estamos enviando
                     success: function(response) {
+                        // Esconde o indicador de carregamento
+                        $("#loading").hide();
+
                         // Verifica se a resposta contém o texto corrigido
                         if(response.texto_corrigido) {
                             // Substitui quebras de linha por <br> para exibição no HTML
@@ -110,6 +142,8 @@
                         }
                     },
                     error: function(xhr, status, error) {
+                        // Esconde o indicador de carregamento
+                        $("#loading").hide();
                         $("#resultado").text("Erro na requisição: " + error);
                     }
                 });

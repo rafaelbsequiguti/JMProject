@@ -5,12 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Correção de Texto</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  <!-- Adicionando o jQuery -->
+
+    <!-- Definindo o estilo da página -->
+    <style>
+        body {
+            font-family: 'Arial Nova', Arial, sans-serif;
+            background-color: #c00000; /* Fundo vermelho */
+            text-align: center;
+            color: #ffffff;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        #logo {
+            width: 180px;  /* Logo aumentada em 20% */
+            margin-top: 20px;
+        }
+
+        #form-processar {
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left; /* Para alinhar o conteúdo do formulário à esquerda */
+        }
+
+        textarea {
+            width: 100%; /* Faz o textarea ocupar 100% da largura do formulário */
+            height: 150px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-sizing: border-box; /* Para garantir que o padding não afete a largura total */
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #resultado {
+            background-color: #f1f1f1; /* Fundo cinza para o texto retornado */
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            color: #333;
+            white-space: pre-wrap; /* Para manter quebras de linha */
+            width: 80%; /* Ajusta a largura para a mesma do formulário */
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
 </head>
 <body>
+    <!-- Logo -->
+    <img id="logo" src="{{ url_for('static', filename='logo.png') }}" alt="Logo sem fundo">
+
     <h1>Correção de Orçamento</h1>
 
     <form id="form-processar">
-        <textarea name="texto" id="texto" rows="10" cols="50" placeholder="Digite o orçamento aqui..."></textarea><br><br>
+        <textarea name="texto" id="texto" rows="15" cols="100" placeholder="Digite o orçamento aqui..."></textarea><br><br>
         <button type="submit">Processar</button>
     </form>
 
@@ -31,9 +99,11 @@
                     method: "POST",
                     data: {texto: texto},  // Dados que estamos enviando
                     success: function(response) {
-                        // Exibe o texto corrigido na div "resultado"
+                        // Verifica se a resposta contém o texto corrigido
                         if(response.texto_corrigido) {
-                            $("#resultado").text(response.texto_corrigido);
+                            // Substitui quebras de linha por <br> para exibição no HTML
+                            var textoComQuebras = response.texto_corrigido.replace(/\n/g, '<br>');
+                            $("#resultado").html(textoComQuebras);  // Exibe o texto corrigido com quebras de linha
                         } else {
                             $("#resultado").text("Erro ao processar o texto.");
                         }
